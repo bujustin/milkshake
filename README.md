@@ -2,9 +2,12 @@
 
 ## Notes
 
-RTM authentication https://www.rememberthemilk.com/services/api/authentication.rtm
 Example rtm web tool/utility https://github.com/alnorth/rtm-bulk-adder
 RTM scripts to replicate with this tool https://www.rememberthemilk.com/services/milkscript/quickstarts/monthlystats.rtm
+
+RTM api references
+- authentication https://www.rememberthemilk.com/services/api/authentication.rtm
+- filters: https://www.rememberthemilk.com/help/?ctx=basics.search.advanced
 
 ## Development
 
