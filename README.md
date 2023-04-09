@@ -16,6 +16,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ### Install dependencies
 - `md5`
 - `react-router-dom`
+- `dayz` ([github](https://github.com/nathanstitt/dayz), [usage](https://github.com/nathanstitt/dayz/blob/master/demo.jsx))
+  - `node-sass` (dependency for compiling .scss which is needed for rendering dayz calendars)
 
 ### `npm start`
 

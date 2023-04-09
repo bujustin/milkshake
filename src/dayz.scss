@@ -1,0 +1,334 @@
+$dayz-event-arrow-width        : 10px !default;
+$dayz-event-height             : 20px !default;
+$dayz-y-label-width            : 60px !default;
+$dayz-border-color             : #b6b6b6 !default;
+$dayz-heading-label-color      : #555 !default;
+$dayz-highlight-color          : #ececec !default;
+$dayz-event-border-color       : #b6b6b6 !default;
+$dayz-event-default-color      : #dddddd  !default;
+$dayz-event-text-default-color : #2b2b2b  !default;
+$dayz-outside-background-color : #F2F2F2;
+$dayz-event-border-radius      : 4px !default;
+$dayz-min-column-width         : 4rem;
+
+$dayz-event-colors: (
+    #4D4D4D, // (gray)
+    #5DA5DA, // (blue)
+    #FAA43A, // (orange)
+    #60BD68, // (green)
+    #F17CB0, // (pink)
+    #B2912F, // (brown)
+    #B276B2, // (purple)
+    #DECF3F, // (yellow)
+    #F15854, // (red)
+    #F5DEB3  // (tan)
+) !default;
+
+$dayz-event-text-colors: (
+    // background colors
+    white, // (gray)
+    black, // (blue)
+    white, // (orange)
+    black, // (green)
+    black, // (pink)
+    white, // (brown)
+    white, // (purple)
+    black, // (yellow)
+    white, // (red)
+    black  // (tan)
+) !default;
+
+.dayz {
+
+    @mixin triangle($direction){
+        $sizeH: $dayz-event-arrow-width;
+        $sizeV: $dayz-event-height / 2;
+        $color: $dayz-event-default-color;
+
+        content: '';
+        display: block;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        position: absolute;
+        -moz-transform: scale(.9999);
+        @if $direction == left{
+            border-width: $sizeV $sizeH $sizeV 0;
+            border-color: transparent $color transparent transparent;
+            left: -1 * $dayz-event-arrow-width;
+            bottom: -1px;
+        }
+        @if $direction == right{
+            border-width: $sizeV 0 $sizeV $sizeH;
+            border-color: transparent transparent transparent $color;
+            right: -1 * $dayz-event-arrow-width;
+            top: -1px;
+        }
+    }
+
+    // these are internal
+    $hour-percent: 100% / 24;
+    $day-width:    100% / 7;
+    width:      100%;
+    height:     100%;
+    box-sizing: border-box;
+    display:    flex;
+    flex-wrap:  nowrap;
+    flex-direction: column;
+    align-items:    stretch;
+
+    .x-labels {
+        height: 30px;
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+        .day-label {
+            display: flex;
+            flex-grow: 1;
+            flex-basis: 1px;
+            padding-left: 8px;
+        }
+    }
+
+    .body {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: row;
+        position: relative;
+
+        .y-labels {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            width: $dayz-y-label-width;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            .all-day, .hour {
+                width: 100%;
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+                text-indent: 8px;
+                text-align: left;
+                border-bottom: 1px solid $dayz-border-color;
+            }
+            .all-day {
+                flex-grow: 0;
+            }
+        }
+
+        .days {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            position: relative;
+            box-sizing: border-box;
+            border-top: 1px solid $dayz-border-color;
+            border-left: 1px solid $dayz-border-color;
+        }
+    }
+    .day {
+        border-right:  1px solid $dayz-border-color;
+        border-bottom: 1px solid $dayz-border-color;
+        box-sizing: border-box;
+
+        .event > * {
+            height: 100%;
+        }
+        &.highlight {
+            background-color: $dayz-highlight-color;
+        }
+    }
+
+    &.month, &.week .all-day, &.day .all-day {
+        .event {
+            $stack: 1;
+            @while $stack < 10 {
+                &.stack-#{$stack} { margin-top: ($stack * $dayz-event-height); }
+                $stack: $stack + 1;
+            }
+        }
+    }
+
+    &.week, &.day {
+        .x-labels{ padding-left: $dayz-y-label-width; }
+        .days {
+            margin-left: $dayz-y-label-width;
+        }
+        .day {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            .all-day {
+                flex: 1;
+                flex-grow: 0;
+                .event {
+                    height: $dayz-event-height;
+                }
+            }
+            .events {
+                flex: 1;
+                position: relative;
+                .event.span-1 {
+                    width: 100%;
+                    position: absolute;
+                }
+            }
+            .label { display: none; }
+        }
+    }
+
+    &.week {
+        .events {
+            .day .event.span-1 {
+                width: $day-width;
+            }
+        }
+    }
+
+    &.month {
+        .days {
+            display: grid;
+            grid-auto-rows: 1fr;
+            grid-template-columns: repeat( 7, minmax($dayz-min-column-width, 1fr) );
+            .day {
+                .label {
+                    text-align: right;
+                    padding: 5px;
+                }
+                .event {
+                    height: $dayz-event-height;
+                    &.span-1 .evbody > div {
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        width: 100%;
+                        overflow: hidden;
+                    }
+                }
+                &.outside {
+                    background-color: $dayz-outside-background-color;
+                }
+            }
+        }
+    }
+
+    // styling in common for events in all displays
+    .event {
+        background: $dayz-event-default-color;
+        color: $dayz-event-text-default-color;
+        @each $current-color in $dayz-event-colors {
+            $i: index($dayz-event-colors, $current-color);
+            &.color-#{$i} .evbody {
+                background: $current-color;
+                color: nth($dayz-event-text-colors, $i);
+            }
+        }
+
+        box-sizing: border-box;
+        position: relative;
+        border: 1px solid $dayz-event-border-color;
+        border-radius: $dayz-event-border-radius;
+
+        $span: 0;
+        @while $span < 7 {
+            $span: $span + 1;
+            &.span-#{$span} {
+                z-index: 1;
+                width: calc(#{$span * 100%} + #{$span * 1px} - 1px);
+                &.is-continued {
+                    width: calc(#{$span * 100%} + #{($span * 1px - 2px)-$dayz-event-arrow-width});
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+                }
+                &.is-continuation {
+                    width: calc(#{$span * 100%} + #{($span * 1px - 2px)-$dayz-event-arrow-width});
+                    border-top-left-radius: 0;
+                    border-bottom-left-radius: 0;
+                }
+                &.is-continued.is-continuation {
+                    width: calc(#{$span * 100%} + #{($span * 1px - 2px)-$dayz-event-arrow-width*2});
+                }
+            }
+        }
+
+
+        &.is-resizable {
+
+            &::before,
+            &::after {
+                content: " ";
+                height: 3px;
+                border: 1px solid black;
+                right: 15%;
+                left: 15%;
+                display: block;
+                position: absolute;
+                border-radius: 5px;
+                visibility: hidden;
+                cursor: ns-resize;
+            }
+
+            @each $current-color in $dayz-event-colors {
+                $i: index($dayz-event-colors, $current-color);
+                &.color-#{$i} .evbody {
+                    &:before, &:after { background-color: darken($current-color, 15%); }
+                }
+            }
+
+            &:before {
+                top: -2px;
+            }
+            &:after {
+                bottom: -2px;
+            }
+            &.is-resizing, &:hover {
+                &:before, &:after {
+                    visibility: visible;
+                }
+            }
+        }
+
+        .evbody {
+            padding-left: 0.4rem;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        &.is-continued {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+
+            &::after {
+                @include triangle(right);
+            }
+            @each $current-color in $dayz-event-colors {
+                $i: index($dayz-event-colors, $current-color);
+                &.color-#{$i} {
+                    &::after {
+                        border-color: transparent transparent transparent $current-color;
+                    }
+                }
+            }
+        }
+
+        &.is-continuation {
+            margin-left: $dayz-event-arrow-width;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            &::before {
+                @include triangle(left);
+            }
+            @each $current-color in $dayz-event-colors {
+                $i: index($dayz-event-colors, $current-color);
+                &.color-#{$i} {
+                    &::before {
+                        border-color: transparent $current-color transparent transparent;
+                    }
+                }
+            }
+        }
+    }
+
+}

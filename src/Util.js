@@ -5,6 +5,16 @@ const RTM_API_KEY = "e44baab87700c76ed4698ba91ac14383";
 const RTM_API_SECRET = "f3ae49a301715a5e";
 const RTM_API_ENDPOINT = "https://api.rememberthemilk.com/services";
 
+export function setStateHelper(component, key, value, callback) {
+  component.setState({
+    [key]: value
+  }, () => {
+    if (callback !== undefined) {
+      callback();
+    }
+  });
+}
+
 /**
  * Construct api signature according to https://www.rememberthemilk.com/services/api/authentication.rtm
  * Params:

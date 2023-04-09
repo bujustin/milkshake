@@ -1,14 +1,16 @@
 import React, { Component } from "react";
-import { callRtmApi, getSignedUrl, writeCookie, readCookie, downloadData } from "./Util.js";
+import Tasks from "./Tasks.js";
+import { callRtmApi, getSignedUrl, writeCookie, readCookie, setStateHelper } from "./Util.js";
 
-export default class Test extends Component {
+export default class Base extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       token: readCookie("token"),
       username: readCookie("username"),
-      data: ""
+      lists: null,
+      selectedListId: null
     };
   }
 
@@ -28,6 +30,8 @@ export default class Test extends Component {
     callRtmApi(getSignedUrl(args), (success, data) => {
       if (!success) {
         this.authenticate();
+      } else {
+        this.loadLists();
       }
     });
   }
@@ -73,61 +77,26 @@ export default class Test extends Component {
     }, 1000);
   };
 
-  getLists() {
+  loadLists() {
     const args = {
       "method": "rtm.lists.getList",
       "auth_token": this.state.token
     };
     callRtmApi(getSignedUrl(args), (success, data) => {
       if (success) {
+        const lists = data["rsp"]["lists"]["list"];
+        let selectedListId = lists.length > 0 ? lists[0]["id"] : null;
+
+        // if default list exists, set it as the selected list
+        const defaultList = lists.find(list => list["name"] === "default")
+        if (defaultList) {
+          selectedListId = defaultList["id"];
+        }
+
         this.setState({
-          data: JSON.stringify(data["rsp"]["lists"]["list"])
+          lists: lists,
+          selectedListId: selectedListId
         });
-      }
-      else {
-        alert(`Api error: ${data["rsp"]["err"]["msg"]}`);
-      }
-    });
-  }
-
-  downloadTasks(listId, year=null) {
-    const args = {
-      "method": "rtm.tasks.getList",
-      "list_id": listId,
-      "auth_token": this.state.token
-    };
-    if (year !== null) {
-      args["filter"] = `status:completed AND completedAfter:${year}-01-01 AND completedBefore:${year}-12-31`;
-    }
-    callRtmApi(getSignedUrl(args), (success, data) => {
-      if (success) {
-        // desired output format
-        let output = "added,due,completed,name,notes\n";
-
-        // iterate through tasks and remember desired fields
-        let taskList = [];
-        for (const taskseries of data["rsp"]["tasks"]["list"][0]["taskseries"]) {
-          const name = taskseries["name"];
-          let notes = [];
-          if (taskseries["notes"].length !== 0) {
-            taskseries["notes"]["note"].forEach(note => notes.push(note["$t"]));
-          }
-          for (const task of taskseries["task"]) {
-            taskList.push([task["added"], task["due"], task["completed"], name, notes]);
-          }
-        }
-
-        // sort tasks by added date
-        taskList.sort((a, b) => a[0].localeCompare(b[0]));
-        for (const task of taskList) {
-          for (const field of task) {
-            output += `"${field}",`;
-          }
-          output += "\n";
-        }
-        
-        // download tasks data
-        downloadData(output, `${this.state.username}_${listId}_${year === null ? "all" : year}.csv`, "text/csv");
       }
       else {
         alert(`Api error: ${data["rsp"]["err"]["msg"]}`);
@@ -138,12 +107,17 @@ export default class Test extends Component {
   render() {
     return(
       <div>
-        Test {this.state.username} {this.state.token}
+        Base {this.state.username} {this.state.token}
         <br />
-        <button onClick={() => this.downloadTasks("44060505", 2022)}>Click this</button>
-        <br />
-        <br />
-        {this.state.data}
+        <select disabled={this.state.lists === null} value={this.state.selectedListId} 
+          onChange={(event) => setStateHelper(this, "selectedListId", event.target.value)}>
+
+          { this.state.lists !== null && this.state.lists.map((list, index) => 
+            <option value={list.id}>{list.name}</option>
+          )}
+        </select>
+
+        <Tasks token={this.state.token} username={this.state.username} listId={this.state.selectedListId} />
       </div>
     );
   }
