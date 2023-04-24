@@ -3,15 +3,17 @@ $dayz-event-height             : 20px !default;
 $dayz-y-label-width            : 60px !default;
 $dayz-border-color             : #b6b6b6 !default;
 $dayz-heading-label-color      : #555 !default;
-$dayz-highlight-color          : #ececec !default;
+$dayz-highlight-color          : #e5e5e5 !default;
 $dayz-event-border-color       : #b6b6b6 !default;
 $dayz-event-default-color      : #dddddd  !default;
 $dayz-event-text-default-color : #2b2b2b  !default;
-$dayz-outside-background-color : #F2F2F2;
+$dayz-outside-background-color : #f7f7f7;
 $dayz-event-border-radius      : 4px !default;
 $dayz-min-column-width         : 4rem;
 
 $dayz-event-colors: (
+    #EEEEEE, // completed task
+    #D4E3F3, // uncompleted task
     #4D4D4D, // (gray)
     #5DA5DA, // (blue)
     #FAA43A, // (orange)
@@ -26,6 +28,8 @@ $dayz-event-colors: (
 
 $dayz-event-text-colors: (
     // background colors
+    black,
+    black,
     white, // (gray)
     black, // (blue)
     white, // (orange)

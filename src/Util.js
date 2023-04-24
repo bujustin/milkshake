@@ -65,6 +65,11 @@ export function writeCookie(name, value) {
   document.cookie = `${APP_NAME}_${name}=${value}; expires=${expires}; path=/`;
 }
 
+export function deleteCookie(name, value) {
+  const expires = new Date().toUTCString();
+  document.cookie = `${APP_NAME}_${name}=${value}; expires=${expires}; path=/`;
+}
+
 export function readCookie(name) {
   const cookies = document.cookie.split(';').map(cookie => cookie.trim());
   return cookies.find(cookie => cookie.startsWith(`${APP_NAME}_${name}=`))?.split('=')[1];

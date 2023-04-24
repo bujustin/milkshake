@@ -1,0 +1,37 @@
+
+.base-font {
+  font-family: var(--rtm-font);
+}
+
+.nav-bar {
+  background-color: var(--bg-blue);
+}
+
+.nav-title-text {
+  font-weight: bold;
+  font-size: 2em;
+  color: white;
+}
+
+.nav-text {
+  font-size: 1em;
+  color: var(--text-over-blue);
+  margin-left: 1em;
+  margin-right: 1em;
+  cursor: pointer;
+}
+
+.nav-user-icon {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  -khtml-border-radius: 5px;
+}
+
+.base-body-div {
+  padding: 1em;
+}
+
+.nav-dropdown-no-caret::after {
+  display: none !important; 
+}

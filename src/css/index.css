@@ -1,0 +1,26 @@
+@font-face {
+  font-family: "MuseoSansRounded";
+  src: url("../fonts/MuseoSansRounded300.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "MuseoSansRounded";
+  src: url("../fonts/MuseoSansRounded700.otf") format("opentype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+body {
+  font-family: MuseoSansRounded, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+:root {
+  --bg-blue: #2461B9;
+  --text-over-blue: #D3DFF1;
+  --bg-over-gray: #EEEEEE;
+  --bg-over-blue: #D4E3F3;
+
+  --rtm-font: MuseoSansRounded, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}

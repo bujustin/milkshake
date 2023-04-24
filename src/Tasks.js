@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import Dayz from "dayz";
 import moment from "moment";
-import { callRtmApi, getSignedUrl, downloadData, setStateHelper } from "./Util.js";
-import "./dayz.scss";
+import { Button, Form } from "react-bootstrap";
+import { setStateHelper } from "./Util.js";
+import "./css/tasks.css";
+import "./css/dayz.scss";
 
 const TaskField = Object.freeze({
   ADDED: 0,
@@ -13,112 +15,46 @@ const TaskField = Object.freeze({
   REPEATING: 5
 });
 
+/**
+ * Props:
+ *  taskList
+ *  date
+ *  changeDate(newDate)
+ *  isLoading
+ **/ 
 export default class Tasks extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      date: moment(),
       display: TaskField.DUE,
-      taskList: null,
       events: null
     };
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.listId !== prevProps.listId) {
-      this.loadTasks(this.props.listId, this.state.date.year());
+    if (this.props.taskList !== prevProps.taskList) {
+      this.loadEvents();
     }
-  }
-
-  loadTasks(listId, year) {
-    const args = {
-      "method": "rtm.tasks.getList",
-      "list_id": listId,
-      "filter": `(dueAfter:${year}-01-01 OR completedAfter:${year}-01-01) AND addedBefore:${year}-12-31`,
-      "auth_token": this.props.token
-    };
-    callRtmApi(getSignedUrl(args), (success, data) => {
-      if (success) {
-        if (!("list" in data["rsp"]["tasks"])) {
-          alert("List has no data");
-          return;
-        }
-
-        // iterate through tasks and remember desired fields
-        let taskList = [];
-        for (const taskseries of data["rsp"]["tasks"]["list"][0]["taskseries"]) {
-          const name = taskseries["name"];
-          const isRepeating = taskseries["task"].length > 1;
-          let notes = [];
-          if (taskseries["notes"].length !== 0) {
-            taskseries["notes"]["note"].forEach(note => notes.push(note["$t"]));
-          }
-          for (const task of taskseries["task"]) {
-            taskList.push([task["added"], task["due"], task["completed"], name, notes, isRepeating]);
-          }
-        }
-
-        // sort tasks by added date
-        taskList.sort((a, b) => a[0].localeCompare(b[0]));
-
-        setStateHelper(this, "taskList", taskList, () => {
-          this.loadEvents();
-        });
-      }
-      else {
-        alert(`Api error: ${data["rsp"]["err"]["msg"]}`);
-      }
-    });
   }
 
   loadEvents() {
     let eventList = [];
-    for (const task of this.state.taskList) {
-      const date = moment(task[this.state.display]);
-      eventList.push({
-        content: task[TaskField.NAME],
-        range: moment.range(date, date),
-        colorIndex: task[TaskField.COMPLETED] === "" ? 2 : 0
-      });
+    if (this.props.taskList !== null) {
+      for (const task of this.props.taskList) {
+        const date = moment(task[this.state.display]);
+        eventList.push({
+          content: task[TaskField.NAME],
+          range: moment.range(date, date),
+          colorIndex: task[TaskField.COMPLETED] === "" ? 2 : 1
+        });
+      }
     }
     setStateHelper(this, "events",  new Dayz.EventsCollection(eventList));
   }
 
-  downloadTasks(listId, year=null) {
-    if (this.state.taskList === null) {
-      alert("No tasks loaded");
-      return;
-    }
-    // desired output format
-    let output = "added,due,completed,name,notes,repeating\n";
-    for (const task of this.state.taskList) {
-      for (const field of task) {
-        output += `"${field}",`;
-      }
-      output += "\n";
-    }
-    // download tasks data
-    downloadData(output, `${this.props.username}_${listId}_${year === null ? "all" : year}.csv`, "text/csv");
-  }
-
-  /**
-   * Params:
-   *  newDate : moment
-   **/
-  changeDate(newDate) {
-    // if new date is in a different year, reload tasks for that year
-    if (newDate.year() !== this.state.date.year()) {
-      setStateHelper(this, "date", newDate, () => {
-        this.loadTasks(this.props.listId, this.state.date.year());
-      });
-    }
-    else {
-      setStateHelper(this, "date", newDate);
-    }
-  }
-
-  changeDisplay(newDisplay) {
+  changeDisplay = (event) => {
+    const newDisplay = parseInt(event.target.value);
     if (newDisplay !== this.state.display) {
       setStateHelper(this, "display", newDisplay, () => {
         this.loadEvents();
@@ -129,31 +65,39 @@ export default class Tasks extends Component {
   render() {
   	return(
   	  <div>
-        Tasks
-        <br />
-        <select value={this.state.date.year()} onChange={(event) => this.changeDate(moment(event.target.value))}>
-          { Array.from({length: 5}, (v, i) => moment().subtract(i, "years").year()).map((year, index) => 
-            <option value={year}>{year}</option>
-          )}
-        </select>
-        <button disabled={this.props.listId === null} onClick={() => this.downloadTasks(this.props.listId, this.state.date.year())}>
-          Export {this.state.date.year()}
-        </button>
-        <select value={this.state.display} onClick={(event) => this.changeDisplay(event.target.value)}>
-          <option value={TaskField.DUE}>Due</option>
-          <option value={TaskField.ADDED}>Added</option>
-          <option value={TaskField.COMPLETED}>Completed</option>
-        </select>
-        <br />
-        <button onClick={() => this.changeDate(this.state.date.subtract(1, "months"))}>
-          Prev
-        </button>
-        {this.state.date.format("MMMM")}
-        <button onClick={() => this.changeDate(this.state.date.add(1, "months"))}>
-          Next
-        </button>
-        <br />
-        <Dayz display="month" date={this.state.date} events={this.state.events} highlightDays={[moment()]} />
+        <div className="task-header-div">
+          <div className="task-header-left-div">
+            <Button size="sm" onClick={() => this.props.changeDate(moment().startOf("month"))}>
+              Today
+            </Button>
+            &nbsp;
+            { this.props.isLoading &&
+              <i class="fa fa-refresh fa-spin fa-1x fa-fw" aria-hidden="true"></i>
+            }
+          </div>
+
+          <div className="task-header-center-div">
+            <span className="task-header-controls">
+              <i class="fa fa-angle-left" aria-hidden="true" onClick={() => this.props.changeDate(this.props.date.clone().subtract(1, "months"))}></i>
+            </span>
+            <span className="task-header-month">
+              {this.props.date.format("MMMM YYYY")}
+            </span>
+            <span className="task-header-controls">
+              <i class="fa fa-angle-right" aria-hidden="true" onClick={() => this.props.changeDate(this.props.date.clone().add(1, "months"))}></i>
+            </span>
+          </div>
+
+          <div className="task-header-right-div">
+            <Form>
+              <Form.Check inline label="Due" type="radio" value={TaskField.DUE} checked={this.state.display === TaskField.DUE} onChange={this.changeDisplay} />
+              <Form.Check inline label="Added" type="radio" value={TaskField.ADDED} checked={this.state.display === TaskField.ADDED} onChange={this.changeDisplay} />
+              <Form.Check inline label="Completed" type="radio" value={TaskField.COMPLETED} checked={this.state.display === TaskField.COMPLETED} onChange={this.changeDisplay} />
+            </Form>
+          </div>
+        </div>
+
+        <Dayz display="month" date={this.props.date} events={this.state.events} highlightDays={[moment()]} />
       </div>
   	);
   }

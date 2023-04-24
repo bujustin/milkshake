@@ -9,11 +9,6 @@ RTM api references
 - authentication https://www.rememberthemilk.com/services/api/authentication.rtm
 - filters: https://www.rememberthemilk.com/help/?ctx=basics.search.advanced
 
-Colors:
-blue 2461B9
-gray highlight EEEEEE
-blue highlight D4E3F3
-
 ## Development
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) `npx create-react-app milkshake`.
@@ -23,6 +18,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 - `react-router-dom`
 - `dayz` ([github](https://github.com/nathanstitt/dayz), [usage](https://github.com/nathanstitt/dayz/blob/master/demo.jsx))
   - `node-sass` (dependency for compiling .scss which is needed for rendering dayz calendars)
+- `react-bootstrap` https://react-bootstrap.github.io
+  - `bootstrap`
+- https://fontawesome.com/v4/examples/
 
 ### `npm start`
 
