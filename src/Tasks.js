@@ -2,18 +2,9 @@ import React, { Component } from "react";
 import Dayz from "dayz";
 import moment from "moment";
 import { Button, Form } from "react-bootstrap";
-import { setStateHelper } from "./Util.js";
+import { setStateHelper, TaskField } from "./Util.js";
 import "./css/tasks.css";
 import "./css/dayz.scss";
-
-const TaskField = Object.freeze({
-  ADDED: 0,
-  DUE: 1,
-  COMPLETED: 2,
-  NAME: 3,
-  NOTES: 4,
-  REPEATING: 5
-});
 
 /**
  * Props:

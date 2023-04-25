@@ -1,0 +1,17 @@
+
+.stats-header-text {
+  font-size: 20px;
+}
+
+.stats-div {
+  display: flex;
+  align-items: center;
+}
+
+.stats-complete-pill {
+  background-color: var(--bg-over-gray) !important;
+}
+
+.stats-incomplete-pill {
+  background-color: var(--bg-over-blue) !important;
+}

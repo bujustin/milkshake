@@ -21,6 +21,10 @@
   cursor: pointer;
 }
 
+.nav-text-selected {
+  font-weight: bold;
+}
+
 .nav-user-icon {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;

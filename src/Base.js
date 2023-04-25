@@ -3,6 +3,7 @@ import Container from "react-bootstrap/Container";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import moment from "moment";
 import Tasks from "./Tasks.js";
+import Stats from "./Stats.js";
 import { callRtmApi, getSignedUrl, writeCookie, readCookie, setStateHelper, downloadData } from "./Util.js";
 import "./css/base.css";
 import userIcon from "./user.png";
@@ -229,9 +230,6 @@ export default class Base extends Component {
               <Nav className="nav-text" onClick={() => { if (this.state.token !== undefined) this.downloadTasks(); }}>
                 Export List
               </Nav>
-              <Nav className="nav-text">
-                Show Stats
-              </Nav>
               { this.state.token === undefined ?
                 <Nav className="nav-text" onClick={() => this.authenticate()}>
                   Log in
@@ -259,6 +257,7 @@ export default class Base extends Component {
         </Navbar>
 
         <div className="base-font base-body-div">
+          <Stats taskList={this.state.taskList} date={this.state.date} />
           <Tasks taskList={this.state.taskList} date={this.state.date} changeDate={(newDate) => this.changeDate(newDate)} isLoading={this.state.isLoading} />
         </div>
       </div>
