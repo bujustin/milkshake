@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/milkshake/static/css/main.a3800c8d.css",
-    "main.js": "/milkshake/static/js/main.8142f01f.js",
+    "main.css": "/milkshake/static/css/main.8eee69bd.css",
+    "main.js": "/milkshake/static/js/main.d49e5f97.js",
     "static/media/MuseoSansRounded700.otf": "/milkshake/static/media/MuseoSansRounded700.17879b939d6df7cd8721.otf",
     "static/media/MuseoSansRounded300.otf": "/milkshake/static/media/MuseoSansRounded300.4da95ea29e528a733e13.otf",
     "index.html": "/milkshake/index.html",
-    "main.a3800c8d.css.map": "/milkshake/static/css/main.a3800c8d.css.map",
-    "main.8142f01f.js.map": "/milkshake/static/js/main.8142f01f.js.map"
+    "main.8eee69bd.css.map": "/milkshake/static/css/main.8eee69bd.css.map",
+    "main.d49e5f97.js.map": "/milkshake/static/js/main.d49e5f97.js.map"
   },
   "entrypoints": [
-    "static/css/main.a3800c8d.css",
-    "static/js/main.8142f01f.js"
+    "static/css/main.8eee69bd.css",
+    "static/js/main.d49e5f97.js"
   ]
 }
