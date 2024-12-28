@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Dayz from "dayz";
 import moment from "moment";
-import { Button, Form } from "react-bootstrap";
+import { Button, Dropdown } from "react-bootstrap";
 import { setStateHelper, TaskField } from "./Util.js";
 import "./css/tasks.css";
 import "./css/dayz.scss";
@@ -34,18 +34,25 @@ export default class Tasks extends Component {
     if (this.props.taskList !== null) {
       for (const task of this.props.taskList) {
         const date = moment(task[this.state.display]);
+        let colorIndex = 3;
+        if (task[TaskField.COMPLETED] !== "") {
+          colorIndex = 1;
+          if (task[TaskField.DUE] !== "" && moment(task[TaskField.COMPLETED]).isAfter(moment(task[TaskField.DUE]))) {
+            colorIndex = 2;
+          }
+        }
         eventList.push({
           content: task[TaskField.NAME],
           range: moment.range(date, date),
-          colorIndex: task[TaskField.COMPLETED] === "" ? 2 : 1
+          // colors are configured in $dayz-event-colors in dayz.scss
+          colorIndex: colorIndex
         });
       }
     }
     setStateHelper(this, "events",  new Dayz.EventsCollection(eventList));
   }
 
-  changeDisplay = (event) => {
-    const newDisplay = parseInt(event.target.value);
+  changeDisplay(newDisplay) {
     if (newDisplay !== this.state.display) {
       setStateHelper(this, "display", newDisplay, () => {
         this.loadEvents();
@@ -80,11 +87,19 @@ export default class Tasks extends Component {
           </div>
 
           <div className="task-header-right-div">
-            <Form>
-              <Form.Check inline label="Due" type="radio" value={TaskField.DUE} checked={this.state.display === TaskField.DUE} onChange={this.changeDisplay} />
-              <Form.Check inline label="Added" type="radio" value={TaskField.ADDED} checked={this.state.display === TaskField.ADDED} onChange={this.changeDisplay} />
-              <Form.Check inline label="Completed" type="radio" value={TaskField.COMPLETED} checked={this.state.display === TaskField.COMPLETED} onChange={this.changeDisplay} />
-            </Form>
+            <span>
+              Display by
+            </span>
+            <Dropdown>
+              <Dropdown.Toggle variant="link">
+                {`${Object.keys(TaskField).find(key => TaskField[key] === this.state.display).toLowerCase()} date`}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item active={this.state.display === TaskField.DUE} onClick={() => this.changeDisplay(TaskField.DUE)}>Due</Dropdown.Item>
+                <Dropdown.Item active={this.state.display === TaskField.ADDED} onClick={() => this.changeDisplay(TaskField.ADDED)}>Added</Dropdown.Item>
+                <Dropdown.Item active={this.state.display === TaskField.COMPLETED} onClick={() => this.changeDisplay(TaskField.COMPLETED)}>Completed</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
         </div>
 

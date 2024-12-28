@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import moment from "moment";
-import Badge from "react-bootstrap/Badge";
+import { Badge, Dropdown } from "react-bootstrap";
 import { setStateHelper, TaskField, StatFields } from "./Util.js";
 import "./css/stats.css";
 
@@ -14,6 +14,7 @@ export default class Stats extends Component {
     super(props);
 
     this.state = {
+      isYearlyStats: false,
       stats: this.getEmptyStats()
     };
   }
@@ -61,25 +62,42 @@ export default class Stats extends Component {
     setStateHelper(this, "stats", stats);
   }
 
+  getStat(stats, name, isYearlyStats) {
+    if (isYearlyStats) {
+      return Object.values(stats).reduce((acc, stat) => acc + stat[name], 0);
+    }
+    return stats[this.props.date.month()][name];
+  }
+
   render() {
   	return(
       <div className="stats-div">
-        Stats for {this.props.date.format("MMMM")}: 
+        Stats for  
+        <Dropdown>
+          <Dropdown.Toggle variant="link">
+            {this.state.isYearlyStats ? "Year" : "Month"}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <Dropdown.Item active={!this.state.isYearlyStats} onClick={() => setStateHelper(this, "isYearlyStats", false)}>Month</Dropdown.Item>
+            <Dropdown.Item active={this.state.isYearlyStats} onClick={() => setStateHelper(this, "isYearlyStats", true)}>Year</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+        ({this.props.date.format(this.state.isYearlyStats ? "YYYY" : "MMMM YYYY")})
         &nbsp;
         <Badge pill text="dark" className="stats-complete-pill">
-          {StatFields.ADDED}: {this.state.stats[this.props.date.month()][StatFields.ADDED]}
+          {StatFields.ADDED}: {this.getStat(this.state.stats, StatFields.ADDED, this.state.isYearlyStats)}
         </Badge>
         &nbsp;
         <Badge pill text="dark" className="stats-complete-pill">
-          {StatFields.COMPLETED_ONTIME}: {this.state.stats[this.props.date.month()][StatFields.COMPLETED_ONTIME]}
+          {StatFields.COMPLETED_ONTIME}: {this.getStat(this.state.stats, StatFields.COMPLETED_ONTIME, this.state.isYearlyStats)}
         </Badge>
         &nbsp;
-        <Badge pill text="dark" className="stats-complete-pill">
-          {StatFields.COMPLETED_OVERDUE}: {this.state.stats[this.props.date.month()][StatFields.COMPLETED_OVERDUE]}
+        <Badge pill text="dark" className="stats-complete-overdue-pill">
+          {StatFields.COMPLETED_OVERDUE}: {this.getStat(this.state.stats, StatFields.COMPLETED_OVERDUE, this.state.isYearlyStats)}
         </Badge>
         &nbsp;
         <Badge pill text="dark" className="stats-incomplete-pill">
-          {StatFields.INCOMPLETE}: {this.state.stats[this.props.date.month()][StatFields.INCOMPLETE]}
+          {StatFields.INCOMPLETE}: {this.getStat(this.state.stats, StatFields.INCOMPLETE, this.state.isYearlyStats)}
         </Badge>
       </div>
   	);

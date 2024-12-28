@@ -13,6 +13,7 @@ $dayz-min-column-width         : 4rem;
 
 $dayz-event-colors: (
     #EEEEEE, // completed task
+    #FCD5A0, // completed overdue task
     #D4E3F3, // uncompleted task
     #4D4D4D, // (gray)
     #5DA5DA, // (blue)
@@ -28,6 +29,7 @@ $dayz-event-colors: (
 
 $dayz-event-text-colors: (
     // background colors
+    black,
     black,
     black,
     white, // (gray)

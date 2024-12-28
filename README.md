@@ -6,7 +6,7 @@ A lightweight RememberTheMilk visualization tool that lets you view your tasks o
 
 - `md5` - used for signing RememberTheMilk API requests
 - `dayz` ([github](https://github.com/nathanstitt/dayz), [demo](https://github.com/nathanstitt/dayz/blob/master/demo.jsx)) - 
-  - `node-sass` - dependency for compiling .scss which is needed for rendering dayz calendars
+  - `sass` - dependency for compiling .scss which is needed for rendering dayz calendars
 - `react-bootstrap` ([github](https://react-bootstrap.github.io))
 - `gh-pages` - used for github pages deployment
 - [font awesome](https://fontawesome.com/v4/examples/)
